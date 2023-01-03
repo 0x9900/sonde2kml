@@ -67,9 +67,9 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR):
                               gxaltitudemode=GxAltitudeMode.relativetoseafloor)
     kml_pnt.description = DESCRIPTION(row)
     kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/balloon.png'
-    kml_pnt.style.labelstyle.scale = 0.75  # Text twice as big
-    kml_pnt.style.iconstyle.color = 'ffffff00'  # Blue
-    kml_pnt.style.iconstyle.scale = 1.25  # Icon thrice as big
+    kml_pnt.style.labelstyle.scale = 0.75
+    kml_pnt.style.iconstyle.color = 'ffffff00'
+    kml_pnt.style.iconstyle.scale = 1.25
 
   folder = doc.newfolder(name=f"{logfile.number} Altitude line", open=0)
   kml_line = folder.newlinestring(name='Altitude', coords=line)
