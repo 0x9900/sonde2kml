@@ -157,8 +157,9 @@ def main():
   cmds.add_argument('-d', '--dir', default='/tmp', help='Directory containing the log files')
   cmds.add_argument('-f', '--file', help="Full path of the file to process")
   parser.add_argument('-s', '--spacing', type=int, default=POINTS_SPACING,
-                      help='Spacing between points')
-  parser.add_argument('-t', '--target-dir', default=TMPDIR, help='Directory for ".kml" files')
+                      help='Spacing between points [default: %(default)d]')
+  parser.add_argument('-t', '--target-dir', default=TMPDIR,
+                      help='Directory for ".kml" files [default: %(default)s]')
   opts = parser.parse_args()
 
   if opts.file:

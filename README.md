@@ -14,9 +14,9 @@ options:
   -d DIR, --dir DIR     Directory containing the log files
   -f FILE, --file FILE  Full path of the file to process
   -s SPACING, --spacing SPACING
-                        Spacing between points
+                        Spacing between points [default: 25]
   -t TARGET_DIR, --target-dir TARGET_DIR
-                        Directory for ".kml" files
+                        Directory for ".kml" files [default: /tmp]
 
 ```
 
