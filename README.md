@@ -3,6 +3,8 @@
 
 Read the radiosonde log file and generate a `.kml` file that can be read with Google Earth.
 
+Works with logs coming from [radiosonde_auto_rx][1]
+
 ## Usage
 ```
 usage: sonde2kml.py [-h] (-d DIR | -f FILE) [-s SPACING] [-t TARGET_DIR]
@@ -34,3 +36,5 @@ In the following example `sonde2kml` uses the last log file to generate the `.km
 ## Output
 
 ![Weahter Sonde path on Google Earth](misc/GoogleEarth-Sonde.png)
+
+[1]: https://github.com/projecthorus/radiosonde_auto_rx
