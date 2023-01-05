@@ -42,21 +42,19 @@ def read_log(logfile):
   logging.info('Read file "%s", number of points: %d', logfile, len(points))
   return points
 
-def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR):
+def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, zip=False):
   points = read_log(logfile)
-  kml = Kml(name="Weather Balloon", open=1)
+  kml = Kml(name=f"Launch: {logfile.datetime.date()} {logfile.datetime.time()}", open=1)
   doc = kml.newdocument()
   doc.liststyle.listitemtype = ListItemType.check
-  doc.name = "Weather balloon"
+  doc.name = f"Sonde: {logfile.number}"
   doc.visibility = 1
   doc.open = 1
   doc.atomauthor = "0x9900"
-  doc.atomlink = "https://0x9900.com/category/hamradio.html"
-  doc.description = (f"Weather balloon {logfile.type} / {logfile.number} \n"
-                     f"Departed on {logfile.datetime} UTC\n"
-                     f"{len(points)} metrics captured")
+  doc.description = (f"Departed on {logfile.datetime} UTC\n"
+                     f"Radiosonde type: {logfile.type}\n")
 
-  folder = doc.newfolder(name=f"{logfile.number} Points", open=0)
+  folder = doc.newfolder(name="Points", open=0)
   line = []
   for idx, row in enumerate(points):
     if idx < len(points) - 10 and idx % spacing != 0:
@@ -71,14 +69,18 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR):
     kml_pnt.style.iconstyle.color = 'ffffff00'
     kml_pnt.style.iconstyle.scale = 1.25
 
-  folder = doc.newfolder(name=f"{logfile.number} Altitude line", open=0)
+  folder = doc.newfolder(name="Altitude line", open=0)
   kml_line = folder.newlinestring(name='Altitude', coords=line)
   kml_line.extrude = 1
   kml_line.altitudemode = AltitudeMode.relativetoground
 
-  kml_file = os.path.join(target_dir, f"{logfile.basename}.kml")
-  logging.info('Generating .kml file: "%s"', kml_file)
-  kml.savekmz(kml_file)
+  if zip:
+    out_file = os.path.join(target_dir, f"{logfile.basename}.kmz")
+    kml.savekmz(out_file)
+  else:
+    out_file = os.path.join(target_dir, f"{logfile.basename}.kml")
+    kml.save(out_file)
+  logging.info('Saving file %s', out_file)
 
 class LogName:
   __slots__ = ['fullname', 'basename', 'fields']
@@ -160,6 +162,8 @@ def main():
                       help='Spacing between points [default: %(default)d]')
   parser.add_argument('-t', '--target-dir', default=TMPDIR,
                       help='Directory for ".kml" files [default: %(default)s]')
+  parser.add_argument('-z', '--zip', action="store_true", default=False,
+                      help='Compress the output file [default: %(default)s]')
   opts = parser.parse_args()
 
   if opts.file:
@@ -167,7 +171,7 @@ def main():
   else:
     logfiles = select_file(opts.dir)
     logfile = logfiles[-1]
-  export_kml(logfile, spacing=opts.spacing, target_dir=opts.target_dir)
+  export_kml(logfile, spacing=opts.spacing, target_dir=opts.target_dir, zip=opts.zip)
 
 if __name__ == "__main__":
   main()
