@@ -1,5 +1,5 @@
 
-# Sonde 2 KML
+# Sonde2KML
 
 Read the radiosonde log file and generate a `.kml` file that can be read with Google Earth.
 

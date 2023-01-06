@@ -6,6 +6,7 @@ import csv
 import logging
 import os
 import re
+import sys
 
 from datetime import datetime
 from pathlib import Path
@@ -16,7 +17,7 @@ from simplekml import GxAltitudeMode
 from simplekml import ListItemType
 from simplekml import AltitudeMode
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 TMPDIR = '/tmp'
 POINTS_SPACING = 25
@@ -42,7 +43,7 @@ def read_log(logfile):
   logging.info('Read file "%s", number of points: %d', logfile, len(points))
   return points
 
-def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, zip=False):
+def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
   points = read_log(logfile)
   kml = Kml(name=f"Launch: {logfile.datetime.date()} {logfile.datetime.time()}", open=1)
   doc = kml.newdocument()
@@ -74,7 +75,7 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, zip=False):
   kml_line.extrude = 1
   kml_line.altitudemode = AltitudeMode.relativetoground
 
-  if zip:
+  if kzip:
     out_file = os.path.join(target_dir, f"{logfile.basename}.kmz")
     kml.savekmz(out_file)
   else:
@@ -137,15 +138,18 @@ class LogName:
 
 
 def select_file(directory):
-  logging.info('Reading "%s" directory', directory)
   logfiles = []
+  logging.info('Scanning directory "%s"', directory)
   for filename in os.listdir(directory):
+    if not filename.endswith('.log'):
+      continue
     try:
       log_file = LogName(os.path.join(directory, filename))
     except OSError:
       logging.debug(filename)
       continue
     logfiles.append(log_file)
+
   return sorted(logfiles)
 
 
@@ -156,7 +160,7 @@ def main():
 
   parser = argparse.ArgumentParser(description="Purge old dxcc images")
   cmds = parser.add_mutually_exclusive_group(required=True)
-  cmds.add_argument('-d', '--dir', default='/tmp', help='Directory containing the log files')
+  cmds.add_argument('-d', '--dir', help='Directory containing the log files')
   cmds.add_argument('-f', '--file', help="Full path of the file to process")
   parser.add_argument('-s', '--spacing', type=int, default=POINTS_SPACING,
                       help='Spacing between points [default: %(default)d]')
@@ -166,12 +170,25 @@ def main():
                       help='Compress the output file [default: %(default)s]')
   opts = parser.parse_args()
 
-  if opts.file:
-    logfile = LogName(opts.file)
+  if opts.dir:
+    try:
+      logfiles = select_file(opts.dir)
+    except NotADirectoryError as err:
+      logging.error(err)
+      sys.exit(os.EX_IOERR)
+    if logfiles:
+      logfile = logfiles[-1]
+    else:
+      logging.warning("No radiosonde log file found")
+      sys.exit(os.EX_IOERR)
   else:
-    logfiles = select_file(opts.dir)
-    logfile = logfiles[-1]
-  export_kml(logfile, spacing=opts.spacing, target_dir=opts.target_dir, zip=opts.zip)
+    if os.path.exists(opts.file):
+      logfile = LogName(opts.file)
+    else:
+      logging.error("File %s Not found", opts.file)
+      sys.exit(os.EX_IOERR)
+
+  export_kml(logfile, spacing=opts.spacing, target_dir=opts.target_dir, kzip=opts.zip)
 
 if __name__ == "__main__":
   main()
