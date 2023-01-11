@@ -16,8 +16,12 @@ trap "cleanup" EXIT INT TERM
 rsync -e ssh --stats -avH "sonderx.home:${SRCDIR}/" ${DSTDIR} | \
     tee $TMPFILE
 
+FILES=$(grep '^20.*_sonde.log' $TMPFILE)
 COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
 
 if [[ $((COUNT)) > 0 ]]; then
-    sonde2kml -d ${DSTDIR} --zip
+    echo "----------------------------------------------------------------------"
+    for file in $FILES; do
+	sonde2kml -f ${DSTDIR}/${file} --zip
+    done
 fi
