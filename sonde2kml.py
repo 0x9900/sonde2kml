@@ -17,18 +17,21 @@ from simplekml import GxAltitudeMode
 from simplekml import ListItemType
 from simplekml import AltitudeMode
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 TMPDIR = '/tmp'
 POINTS_SPACING = 25
 
-DESCRIPTION = Template("""Frame: $frame
-Serial: $serial
+DESCRIPTION = Template("""Serial: $serial
+Frame: $frame
+Date: $datetime
+
 Altitude: $alt m
 Velocity: Verticale: $vel_v m/s
 Velocity: Horizontale: $vel_h m/s
 Heading: $headingº
 Temperature: $tempºC
+
 Battery: $batt_v Volt
 Frequency: $freq_mhz MHz
 SNR: $snr""").safe_substitute
@@ -62,8 +65,9 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
       continue
     coords = (row['lon'], row['lat'], row['alt'])
     line.append(coords)
-    kml_pnt = folder.newpoint(name=idx, coords=[coords],
+    kml_pnt = folder.newpoint(name=f"Packet: #{idx}", coords=[coords],
                               gxaltitudemode=GxAltitudeMode.relativetoseafloor)
+    row['datetime'] = logfile.datetime
     kml_pnt.description = DESCRIPTION(row)
     kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/balloon.png'
     kml_pnt.style.labelstyle.scale = 0.75
