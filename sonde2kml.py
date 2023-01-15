@@ -4,6 +4,7 @@
 import argparse
 import csv
 import logging
+import math
 import os
 import re
 import sys
@@ -11,6 +12,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from string import Template
+from dateutil import tz
 
 from simplekml import Kml
 from simplekml import GxAltitudeMode
@@ -24,11 +26,13 @@ POINTS_SPACING = 25
 
 DESCRIPTION = Template("""Serial: $serial
 Frame: $frame
-Date: $datetime
+Date: $date
+Local Time: $localtime
 
 Altitude: $alt m
 Velocity: Verticale: $vel_v m/s
 Velocity: Horizontale: $vel_h m/s
+Speed: $speed m/s
 Heading: $headingº
 Temperature: $tempºC
 
@@ -67,7 +71,12 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
     line.append(coords)
     kml_pnt = folder.newpoint(name=f"Packet: #{idx}", coords=[coords],
                               gxaltitudemode=GxAltitudeMode.relativetoseafloor)
-    row['datetime'] = logfile.datetime
+    speed = math.sqrt(float(row['vel_h'])**2 + float(row['vel_v'])**2)
+    utc_date = datetime.strptime(row['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    utc_date = utc_date.replace(tzinfo=tz.tzutc())
+    row['date'] = utc_date.astimezone(tz.tzlocal()).strftime('%x')
+    row['localtime'] = utc_date.astimezone(tz.tzlocal()).strftime('%X')
+    row['speed'] = f"{speed:.2f}"
     kml_pnt.description = DESCRIPTION(row)
     kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/balloon.png'
     kml_pnt.style.labelstyle.scale = 0.75
