@@ -14,14 +14,15 @@ cleanup() {
 
 trap "cleanup" EXIT INT TERM
 
-rsync -e ssh --stats -avH "sonderx.home:${SRCDIR}/" ${DSTDIR} | tee $TMPFILE
+rsync -e ssh --stats -avH "sonderx.home:${SRCDIR}/" ${DSTDIR} > ${TMPFILE}
 
-FILES=($(grep '^20.*_sonde.log' $TMPFILE))
+FILES=($(egrep '^\d+-\d+_.*_sonde.log' $TMPFILE))
 COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
 
 if [[ $((COUNT)) > 0 ]]; then
-    echo "----------**********-------------------------------------------------"
     for file in "${FILES[@]}"; do
 	sonde2kml -s 50 -f ${DSTDIR}/"${file}" --zip
     done
+else
+    echo "No new file to process"
 fi
