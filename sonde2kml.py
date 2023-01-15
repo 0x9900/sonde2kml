@@ -30,8 +30,8 @@ Date: $date
 Local Time: $localtime
 
 Altitude: $alt m
-Velocity: Verticale: $vel_v m/s
-Velocity: Horizontale: $vel_h m/s
+Velocity: Vertical: $vel_v m/s
+Velocity: Horizontal: $vel_h m/s
 Speed: $speed m/s
 Heading: $headingº
 Temperature: $tempºC
