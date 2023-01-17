@@ -6,6 +6,7 @@ TMPFILE=$(mktemp -t "getsonde")
 SRCDIR="/tmp/log"
 # DSTDIR="/Volumes/WDPassport/tmp/sondes"
 DSTDIR="/tmp/sondes"
+SPACING=${1:-50}
 
 cleanup() {
     rm -f $TMPFILE
@@ -21,7 +22,7 @@ COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
 
 if [[ $((COUNT)) > 0 ]]; then
     for file in "${FILES[@]}"; do
-	sonde2kml -s 50 -f ${DSTDIR}/"${file}" --zip
+	./sonde2kml.py -s ${SPACING} -f ${DSTDIR}/"${file}" --zip
     done
 else
     echo "No new file to process"

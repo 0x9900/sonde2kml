@@ -19,17 +19,18 @@ from simplekml import GxAltitudeMode
 from simplekml import ListItemType
 from simplekml import AltitudeMode
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 TMPDIR = '/tmp'
-POINTS_SPACING = 25
+POINTS_SPACING = 100
 
 DESCRIPTION = Template("""Serial: $serial
 Frame: $frame
-Date: $date
+UTC Time: $utc_date
 Local Time: $localtime
 
 Altitude: $alt m
+Max Altitude: $max_alt
 Velocity: Vertical: $vel_v m/s
 Velocity: Horizontal: $vel_h m/s
 Speed: $speed m/s
@@ -46,12 +47,18 @@ def read_log(logfile):
   with open(logfile.fullname, encoding="ASCII", newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
+      for key, val in row.items():
+        try:
+          row[key] = float(val)
+        except ValueError:
+          pass
       points.append(row)
   logging.info('Read file "%s", number of points: %d', logfile, len(points))
   return points
 
 def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
   points = read_log(logfile)
+
   kml = Kml(name=f"Launch: {logfile.datetime.date()} {logfile.datetime.time()}", open=1)
   doc = kml.newdocument()
   doc.liststyle.listitemtype = ListItemType.check
@@ -63,22 +70,30 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
                      f"Radiosonde type: {logfile.type}\n")
 
   folder = doc.newfolder(name="Points", open=0)
+  max_alt = max(float(d['alt']) for d in points)
   line = []
   for idx, row in enumerate(points):
-    if idx < len(points) - 10 and idx % spacing != 0:
-      continue
     coords = (row['lon'], row['lat'], row['alt'])
     line.append(coords)
+
+    if row['alt'] < max_alt and idx < len(points) - 10 and idx % spacing != 0:
+      continue
+
+    row['max_alt'] = max_alt
     kml_pnt = folder.newpoint(name=f"Packet: #{idx}", coords=[coords],
                               gxaltitudemode=GxAltitudeMode.relativetoseafloor)
     speed = math.sqrt(float(row['vel_h'])**2 + float(row['vel_v'])**2)
     utc_date = datetime.strptime(row['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    row['utc_date'] = utc_date.strftime('%x %X')
     utc_date = utc_date.replace(tzinfo=tz.tzutc())
-    row['date'] = utc_date.astimezone(tz.tzlocal()).strftime('%x')
-    row['localtime'] = utc_date.astimezone(tz.tzlocal()).strftime('%X')
+    row['localtime'] = utc_date.astimezone(tz.tzlocal()).strftime('%x %X')
     row['speed'] = f"{speed:.2f}"
     kml_pnt.description = DESCRIPTION(row)
-    kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/balloon.png'
+    if row['alt'] < max_alt:
+      kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/balloon.png'
+    else:
+      kml_pnt.style.iconstyle.icon.href = 'https://bsdworld.org/marker.png'
+
     kml_pnt.style.labelstyle.scale = 0.75
     kml_pnt.style.iconstyle.color = 'ffffff00'
     kml_pnt.style.iconstyle.scale = 1.25
