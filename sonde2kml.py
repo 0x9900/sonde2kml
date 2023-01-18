@@ -199,7 +199,7 @@ def main():
   parser.add_argument('-z', '--zip', action="store_true", default=False,
                       help='Compress the output file [default: %(default)s]')
   opts = parser.parse_args()
-
+  logging.info("zip: %s, spacing %d, target_dir: %s", opts.zip, opts.spacing, opts.target_dir)
   if opts.dir:
     try:
       logfiles = select_file(opts.dir)

@@ -27,10 +27,10 @@ options:
 In the following example `sonde2kml` uses the last log file to generate the `.kml` file.
 
 ```
-√ fred@sonderx$ sonde2kml --dir auto_rx/log
-13:42:24 INFO: Reading "auto_rx/log" directory
-13:42:24 INFO: Read file "auto_rx/log/20230103-110742_U2510368_RS41_404000_sonde.log", number of points: 501
-13:42:24 INFO: Generating .kml file: "/tmp/20230103-110742_U2510368_RS41_404000_sonde.kml"
+√ fred@sonderx$ sonde2kml --spacing 150 --file /tmp/sondes/20230117-112338_U2450614_RS41_404001_sonde.log
+09:07:34 INFO: zip: False, spacing 150, target_dir: /tmp
+09:07:34 INFO: Read file "/tmp/sondes/20230117-112338_U2450614_RS41_404001_sonde.log", number of points: 4473
+09:07:34 INFO: Saving file /tmp/20230117-112338_U2450614_RS41_404001_sonde.kml
 ```
 
 ## Output
