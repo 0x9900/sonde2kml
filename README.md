@@ -1,9 +1,11 @@
 
 # Sonde2KML
 
-Read the radiosonde log file and generate a `.kml` file that can be read with Google Earth.
+Read the radiosonde log file and generate a `.kml` file for [Google Earth][1].
 
-Works with logs coming from [radiosonde_auto_rx][1]
+Works with logs coming from [radiosonde_auto_rx][2]
+
+You can find more information on how to track weather balloons at [https://0x9900.com/][3]
 
 ## Usage
 ```
@@ -37,4 +39,6 @@ In the following example `sonde2kml` uses the last log file to generate the `.km
 
 ![Weahter Sonde path on Google Earth](misc/GoogleEarth-Sonde.png)
 
-[1]: https://github.com/projecthorus/radiosonde_auto_rx
+[1]: https://www.google.com/earth/versions/#earth-pro
+[2]: https://github.com/projecthorus/radiosonde_auto_rx
+[3]: https://0x9900.com/tracking-weather-balloons/
