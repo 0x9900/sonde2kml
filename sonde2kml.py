@@ -52,6 +52,8 @@ def read_log(logfile):
           row[key] = float(val)
         except ValueError:
           pass
+        if row['temp'] == -273.0:
+          row['temp'] = float('nan')
       points.append(row)
   logging.info('Read file "%s", number of points: %d', logfile, len(points))
   return points
