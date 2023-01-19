@@ -39,6 +39,24 @@ In the following example `sonde2kml` uses the last log file to generate the `.km
 
 ![Weahter Sonde path on Google Earth](misc/GoogleEarth-Sonde.png)
 
+## Examples
+
+  - [20230116-230717_U2450615_RS41_404000_sonde.kmz][4]
+  - [20230117-112338_U2450614_RS41_404001_sonde.kmz][5]
+  - [20230117-230557_U2450622_RS41_404001_sonde.kmz][6]
+  - [20230118-110354_U2540033_RS41_404001_sonde.kmz][7]
+  - [20230118-230610_U2540023_RS41_404001_sonde.kmz][8]
+  - [20230119-110735_U2450623_RS41_404001_sonde.kmz][9]
+
+
+
 [1]: https://www.google.com/earth/versions/#earth-pro
 [2]: https://github.com/projecthorus/radiosonde_auto_rx
 [3]: https://0x9900.com/tracking-weather-balloons/
+
+[4]: misc/20230116-230717_U2450615_RS41_404000_sonde.kmz
+[5]: misc/20230117-112338_U2450614_RS41_404001_sonde.kmz
+[6]: misc/20230117-230557_U2450622_RS41_404001_sonde.kmz
+[7]: misc/20230118-110354_U2540033_RS41_404001_sonde.kmz
+[8]: misc/20230118-230610_U2540023_RS41_404001_sonde.kmz
+[9]: misc/20230119-110735_U2450623_RS41_404001_sonde.kmz
