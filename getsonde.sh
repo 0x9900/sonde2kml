@@ -22,7 +22,7 @@ COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
 
 if [[ $((COUNT)) > 0 ]]; then
     for file in "${FILES[@]}"; do
-	./sonde2kml.py -s ${SPACING} -f ${DSTDIR}/"${file}" --zip
+	sonde2kml -s ${SPACING} -f ${DSTDIR}/"${file}" --zip
     done
 else
     echo "No new file to process"
