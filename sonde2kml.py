@@ -122,7 +122,7 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
 class LogName:
   __slots__ = ['fullname', 'basename', 'fields']
   RE_ = re.compile(
-    r'^(?P<date>\d+)-(?P<time>\d+)_(?P<number>\w+)_(?P<type>[\w-]+)_(?P<freq>\d+)_.*$'
+    r'^(?P<date>\d+)-(?P<time>\d+)_(?P<number>[-\w]+)_(?P<type>[\w-]+)_(?P<freq>\d+)_.*$'
   )
   def __init__(self, filename):
     self.fullname = filename
