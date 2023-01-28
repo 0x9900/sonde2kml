@@ -2,18 +2,12 @@
 # Download the radiosonde log files into my laptop, then generate the
 # kml file if a new file has been downloaded
 
-TMPFILE=$(mktemp -t "getsonde")
 SRCDIR="/tmp/log"
-# DSTDIR="/Volumes/WDPassport/tmp/sondes"
-DSTDIR="/tmp/sondes"
+DSTDIR="/Volumes/WDPassport/sondes"
 SPACING=${1:-50}
 
-cleanup() {
-    rm -f $TMPFILE
-    exit 0
-}
-
-trap "cleanup" EXIT INT TERM
+TMPFILE=$(mktemp -t "getsonde")
+trap "rm -f ${TMPFILE}; exit 0" EXIT INT TERM
 
 rsync -e ssh --stats -avH "sonderx.home:${SRCDIR}/" ${DSTDIR} > ${TMPFILE}
 
@@ -22,7 +16,7 @@ COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
 
 if [[ $((COUNT)) > 0 ]]; then
     for file in "${FILES[@]}"; do
-	sonde2kml -s ${SPACING} -f ${DSTDIR}/"${file}" --zip
+	sonde2kml -s ${SPACING} -f ${DSTDIR}/"${file}" --target-dir ${DSTDIR} --zip
     done
 else
     echo "No new file to process"
