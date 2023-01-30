@@ -65,6 +65,7 @@ def read_log(logfile):
   return points
 
 def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
+  # pylint: disable=too-many-locals
   points = read_log(logfile)
 
   kml = Kml(name=f"Launch: {logfile.datetime.date()} {logfile.datetime.time()}", open=1)
