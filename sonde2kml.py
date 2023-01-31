@@ -24,7 +24,7 @@ from simplekml import Kml
 from simplekml import GxAltitudeMode
 from simplekml import AltitudeMode
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 TMPDIR = '/tmp'
 POINTS_SPACING = 100
@@ -137,6 +137,7 @@ def export_kml(logfile, spacing=POINTS_SPACING, target_dir=TMPDIR, kzip=False):
     out_file = os.path.join(target_dir, f"{logfile.basename}.kml")
     kml.save(out_file)
   logging.info('Saving file %s', out_file)
+
 
 class LogName:
   __slots__ = ['fullname', 'basename', 'fields']
