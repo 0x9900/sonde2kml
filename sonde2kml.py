@@ -48,7 +48,8 @@ SNR: $snr""").safe_substitute
 
 README = """<![CDATA[<h2>Weather Ballon {logfile.number}</h2>
 <p>
-<b>Radiosonde ID:</b> {logfile.number}<br>
+<b>Radiosonde ID:</b>
+ <a href="https://sondehub.org/#!mt=Mapnik&q={logfile.number}">{logfile.number}</a><br>
 <b>Departed on:</b> {logfile.datetime} UTC<br>
 <b>Radiosonde type:</b> {logfile.type}</p>
 
