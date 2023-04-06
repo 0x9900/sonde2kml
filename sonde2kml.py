@@ -96,7 +96,10 @@ def kml_points(kml, points, spacing):
     kml_pnt = folder.newpoint(name=f"Packet: #{idx}", coords=[coords],
                               gxaltitudemode=GxAltitudeMode.relativetoseafloor)
     speed = math.sqrt(float(row['vel_h'])**2 + float(row['vel_v'])**2)
-    utc_date = datetime.strptime(row['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    try:
+      utc_date = datetime.strptime(row['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    except ValueError:
+      utc_date = datetime.strptime(row['timestamp'], "%Y-%m-%dT%H:%M:%SZ")
     row['utc_date'] = utc_date.strftime('%Y-%m-%d %X')
     utc_date = utc_date.replace(tzinfo=tz.tzutc())
     row['localtime'] = utc_date.astimezone(tz.tzlocal()).strftime('%Y-%m-%d %X')
