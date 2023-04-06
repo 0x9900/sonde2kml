@@ -2,7 +2,7 @@
 # Download the radiosonde log files into my laptop, then generate the
 # kml file if a new file has been downloaded
 
-SRCDIR="/home/fred/src/radiosonde_auto_rx/auto_rx/log"
+SRCDIR="/tmp/radiosonde"
 DSTDIR="/Volumes/WDPassport/sondes"
 SPACING=${1:-50}
 
