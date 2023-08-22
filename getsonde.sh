@@ -2,14 +2,15 @@
 # Download the radiosonde log files into my laptop, then generate the
 # kml file if a new file has been downloaded
 
-SRCDIR="/tmp/radiosonde"
+SRCDIR="/var/run/radiosonde"
 DSTDIR="/Volumes/WDPassport/sondes"
 SPACING=${1:-50}
 
 TMPFILE=$(mktemp -t "getsonde")
 trap "rm -f ${TMPFILE}; exit 0" EXIT INT TERM
 
-rsync -e ssh --stats -avH "sonderx.home:${SRCDIR}/" ${DSTDIR} > ${TMPFILE}
+srcdir=${SRCDIR%%/+(/)}/	# clean up trailing slashes
+rsync -e ssh --stats -avH "sonderx.home:${srcdir}" ${DSTDIR} > ${TMPFILE}
 
 FILES=($(egrep '^\d+-\d+_.*_sonde.log' $TMPFILE))
 COUNT=$(awk -F : '/Number of regular files transferred/{print $2}' $TMPFILE)
